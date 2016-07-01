@@ -6,24 +6,31 @@
 //
 
 #import "INLTheme.h"
-#import "INLThemeElement.h"
+#import "UIColor+Hex.h"
+
+
+@interface INLTheme () {
+    NSDictionary *_aliases;
+}
+@end
+
 
 @implementation INLTheme
 
 -(instancetype)initWithThemeDict:(NSDictionary *)themeDict {
 
 	if (self = [super init]) {
-		NSDictionary * aliasDict = themeDict[@"INLThemeAlias"];
-
+        _aliases = themeDict[@"INLThemeAlias"];
 		NSMutableDictionary * uiElements = [@{} mutableCopy];
+
 		for (NSString * elementId in themeDict.keyEnumerator) {
 			if ([elementId isEqualToString:@"INLThemeAlias"]) {
 				continue;
 			}
 			NSMutableDictionary * values = [themeDict[elementId] mutableCopy];
 			for (NSString * key in [themeDict[elementId] keyEnumerator]) {
-				if ([aliasDict objectForKey:values[key]] != nil) {
-					values[key] = aliasDict[values[key]];
+				if (_aliases[values[key]] != nil) {
+					values[key] = _aliases[values[key]];
 				}
 			}
 			uiElements[elementId] = [INLThemeElement elementWithDictionary:values];
@@ -60,5 +67,37 @@
 
 	return [self themeWithJSONData:[json dataUsingEncoding:NSUTF8StringEncoding]];
 }
+
+- (UIColor *)colorWithName:(NSString *__nonnull)colorName {
+	NSString *colorString = _aliases[colorName];
+
+	if (colorString != nil) {
+        // TODO: cache these parsed UIColor objects
+		return [UIColor colorWithHex:colorString];
+	}
+
+	return nil;
+}
+
+- (UIColor *)primaryColor {
+    return [self colorWithName:@"primaryColor"];
+}
+
+- (UIColor *)primaryDarkColor {
+    return [self colorWithName:@"primaryDarkColor"];
+}
+
+- (UIColor *)accentColor {
+	return [self colorWithName:@"appAccent"];
+}
+
+- (UIColor *)textColorPrimary {
+    return [self colorWithName:@"textColorPrimary"];
+}
+
+- (UIColor *)textColorSecondary {
+    return [self colorWithName:@"textColorSecondary"];
+}
+
 
 @end

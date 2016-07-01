@@ -19,7 +19,7 @@ public class INLThemeService: NSObject {
 		return Static.instance
 	}
 
-	var currentTheme: INLTheme?
+	public var currentTheme: INLTheme?
 	var themeConsumers = [INLThemeConsumer]()
 
 	// MARK: - Register theme consumer

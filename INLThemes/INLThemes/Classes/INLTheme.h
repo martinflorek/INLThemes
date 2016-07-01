@@ -17,4 +17,11 @@
 +(instancetype __nonnull)themeWithJSONFile:(NSString * __nonnull)jsonName;
 +(instancetype __nonnull)themeWithJSON:(NSString * __nonnull)json;
 
+- (UIColor * __nullable)colorWithName:(NSString * __nonnull)colorName;
+- (UIColor * __nullable)primaryColor;
+- (UIColor * __nullable)primaryDarkColor;
+- (UIColor * __nullable)accentColor;
+- (UIColor * __nullable)textColorPrimary;
+- (UIColor * __nullable)textColorSecondary;
+
 @end
