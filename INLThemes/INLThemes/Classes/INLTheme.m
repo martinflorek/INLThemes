@@ -35,7 +35,10 @@
             NSMutableDictionary *values = [themeDict[elementId] mutableCopy];
 
             for (NSString *key in [themeDict[elementId] keyEnumerator]) {
-                if (_colors[values[key]] != nil) {
+                if ([@"font" isEqualToString:key] && _fonts[values[key]] != nil) {
+                    values[key] = _fonts[values[key]];
+                }
+                else if (_colors[values[key]] != nil) {
                     values[key] = _colors[values[key]];
                 }
             }

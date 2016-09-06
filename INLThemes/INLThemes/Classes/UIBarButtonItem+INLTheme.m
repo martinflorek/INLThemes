@@ -22,25 +22,29 @@ synthesizeElementId
 
 @implementation UITabBarItem (INLTheme)
 
--(void)applyTheme:(INLThemeElement *)theme {
+- (void)applyTheme:(INLThemeElement *)theme {
+    NSString *fontName = [theme valueForKey:@"font"];
+    if (fontName != nil) {
+        [self setTitleTextAttributes:@{NSFontAttributeName : [UIFont fontWithName:fontName size:20.0f]} forState:UIControlStateNormal];
+    }
 
-	NSString * title = [theme valueForKey:@"title"];
-	if (title) {
-		self.title = title;
-	}
+    NSString *title = [theme valueForKey:@"title"];
+    if (title) {
+        self.title = title;
+    }
 
-	NSString * selectedImage = [theme valueForKey:@"selectedImage"];
-	if (selectedImage) {
-		self.selectedImage = [INLAssetService imageNamed:selectedImage];
-	}
+    NSString *selectedImage = [theme valueForKey:@"selectedImage"];
+    if (selectedImage) {
+        self.selectedImage = [INLAssetService imageNamed:selectedImage];
+    }
 
-	NSString * imageSrc = [theme valueForKey:@"image"];
-	if (imageSrc) {
-		self.image = [INLAssetService imageNamed:imageSrc];
-		if (!selectedImage) {
-			self.selectedImage = [INLAssetService imageNamed:imageSrc];
-		}
-	}
+    NSString *imageSrc = [theme valueForKey:@"image"];
+    if (imageSrc) {
+        self.image = [INLAssetService imageNamed:imageSrc];
+        if (!selectedImage) {
+            self.selectedImage = [INLAssetService imageNamed:imageSrc];
+        }
+    }
 }
 
 @end
@@ -61,30 +65,30 @@ synthesizeElementId
 		[((id<INLThemedView>)self.customView) applyTheme:theme];
 	}
 
-	NSString * imageSrc = [theme valueForKey:@"image"];
-	if (imageSrc) {
-		self.image = [INLAssetService imageNamed:imageSrc];
-	}
+    NSString *imageSrc = [theme valueForKey:@"image"];
+    if (imageSrc) {
+        self.image = [INLAssetService imageNamed:imageSrc];
+    }
 
-	if (!self.customView || self.hasThemeGeneratedCustomView.boolValue) {
-		self.hasThemeGeneratedCustomView = @YES;
-		self.image = [INLAssetService imageNamed:imageSrc];
+    if (!self.customView || self.hasThemeGeneratedCustomView.boolValue) {
+        self.hasThemeGeneratedCustomView = @YES;
+        self.image = [INLAssetService imageNamed:imageSrc];
 
-		UIButton * button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, self.image.size.width, self.image.size.height)];
-		[button addTarget:self.target action:self.action forControlEvents:UIControlEventTouchUpInside];
-		[button setImage:[self.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-		self.customView = button;
-	}
+        UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, self.image.size.width, self.image.size.height)];
+        [button addTarget:self.target action:self.action forControlEvents:UIControlEventTouchUpInside];
+        [button setImage:[self.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        self.customView = button;
+    }
 
-	NSString * color = [theme valueForKey:@"color"];
-	if (color) {
-		if ([self.customView respondsToSelector:@selector(imageView)]) {
-			[self.customView imageView].tintColor = [UIColor colorWithHex:color];
-		}
-		else {
-			[self.customView setTintColor:[UIColor colorWithHex:color]];
-		}
-	}
+    NSString *color = [theme valueForKey:@"color"];
+    if (color) {
+        if ([self.customView respondsToSelector:@selector(imageView)]) {
+            [self.customView imageView].tintColor = [UIColor colorWithHex:color];
+        }
+        else {
+            [self.customView setTintColor:[UIColor colorWithHex:color]];
+        }
+    }
 }
 
 @end
