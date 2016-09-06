@@ -10,73 +10,95 @@
 
 
 @interface INLTheme () {
-    NSDictionary *_aliases;
+    NSDictionary *_colors;
+    NSDictionary *_fonts;
 }
 @end
 
 
 @implementation INLTheme
 
--(instancetype)initWithThemeDict:(NSDictionary *)themeDict {
+#pragma mark -- Initializers
 
-	if (self = [super init]) {
-        _aliases = themeDict[@"INLThemeAlias"];
-		NSMutableDictionary * uiElements = [@{} mutableCopy];
+- (instancetype)initWithThemeDict:(NSDictionary *)themeDict {
+    if (self = [super init]) {
+        _colors = themeDict[@"INLThemeColors"];
+        _fonts = themeDict[@"INLThemeFonts"];
 
-		for (NSString * elementId in themeDict.keyEnumerator) {
-			if ([elementId isEqualToString:@"INLThemeAlias"]) {
-				continue;
-			}
-			NSMutableDictionary * values = [themeDict[elementId] mutableCopy];
-			for (NSString * key in [themeDict[elementId] keyEnumerator]) {
-				if (_aliases[values[key]] != nil) {
-					values[key] = _aliases[values[key]];
-				}
-			}
-			uiElements[elementId] = [INLThemeElement elementWithDictionary:values];
-		}
+        NSMutableDictionary *uiElements = [NSMutableDictionary new];
 
-		self.uiElements = uiElements;
-	}
-	return self;
+        for (NSString *elementId in themeDict.keyEnumerator) {
+            if ([elementId isEqualToString:@"INLThemeColors"] || [elementId isEqualToString:@"INLThemeFonts"]) {
+                continue;
+            }
+
+            NSMutableDictionary *values = [themeDict[elementId] mutableCopy];
+
+            for (NSString *key in [themeDict[elementId] keyEnumerator]) {
+                if (_colors[values[key]] != nil) {
+                    values[key] = _colors[values[key]];
+                }
+            }
+
+            uiElements[elementId] = [INLThemeElement elementWithDictionary:values];
+        }
+
+        self.uiElements = uiElements;
+    }
+
+    return self;
 }
 
-+(instancetype)themeWithPlist:(NSString *)plistName {
++ (instancetype)themeWithPlist:(NSString *)plistName {
+    NSDictionary *themeDict = nil;
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
 
-	NSDictionary * themeDict = nil;
-	NSString * plistPath = [[NSBundle mainBundle] pathForResource:plistName ofType:@"plist"];
-	if (plistPath) {
-		themeDict = [NSDictionary dictionaryWithContentsOfFile:plistPath];
-	}
-	return [[INLTheme alloc] initWithThemeDict:themeDict];
+    if (plistPath) {
+        themeDict = [NSDictionary dictionaryWithContentsOfFile:plistPath];
+    }
+
+    return [[INLTheme alloc] initWithThemeDict:themeDict];
 }
 
-+(instancetype)themeWithJSONData:(NSData *)jsonData {
-
-	NSDictionary * themeDict = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:nil];
-	return [[INLTheme alloc] initWithThemeDict:themeDict];
++ (instancetype)themeWithJSONData:(NSData *)jsonData {
+    NSDictionary *themeDict = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:nil];
+    return [[INLTheme alloc] initWithThemeDict:themeDict];
 }
 
-+(instancetype)themeWithJSONFile:(NSString *)jsonName {
-
-	NSString * jsonPath = [[NSBundle mainBundle] pathForResource:jsonName ofType:@"json"];
-	return [self themeWithJSONData:[NSData dataWithContentsOfFile:jsonPath]];
++ (instancetype)themeWithJSONFile:(NSString *)jsonName {
+    NSString *jsonPath = [[NSBundle mainBundle] pathForResource:jsonName ofType:@"json"];
+    return [self themeWithJSONData:[NSData dataWithContentsOfFile:jsonPath]];
 }
 
-+(instancetype)themeWithJSON:(NSString *)json {
-
-	return [self themeWithJSONData:[json dataUsingEncoding:NSUTF8StringEncoding]];
++ (instancetype)themeWithJSON:(NSString *)json {
+    return [self themeWithJSONData:[json dataUsingEncoding:NSUTF8StringEncoding]];
 }
+
+#pragma mark -- Fonts
+
+- (NSString *__nullable)regularFontName {
+    return _fonts[@"regular"];
+}
+
+- (NSString *__nullable)boldFontName {
+    return _fonts[@"bold"];
+}
+
+- (NSString *__nullable)lightFontName {
+    return _fonts[@"light"];
+}
+
+#pragma mark -- Colors
 
 - (UIColor *)colorWithName:(NSString *__nonnull)colorName {
-	NSString *colorString = _aliases[colorName];
+    NSString *colorString = _colors[colorName];
 
-	if (colorString != nil) {
+    if (colorString != nil) {
         // TODO: cache these parsed UIColor objects
-		return [UIColor colorWithHex:colorString];
-	}
+        return [UIColor colorWithHex:colorString];
+    }
 
-	return nil;
+    return nil;
 }
 
 - (UIColor *)primaryColor {
@@ -88,7 +110,7 @@
 }
 
 - (UIColor *)accentColor {
-	return [self colorWithName:@"appAccent"];
+    return [self colorWithName:@"appAccent"];
 }
 
 - (UIColor *)textColorPrimary {
