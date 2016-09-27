@@ -10,20 +10,20 @@ import Foundation
 
 
 @objc
-public class INLThemeService: NSObject {
+open class INLThemeService: NSObject {
 
-	public class var sharedService: INLThemeService {
+	open class var sharedService: INLThemeService {
 		struct Static {
 			static var instance = INLThemeService()
 		}
 		return Static.instance
 	}
 
-	public var currentTheme: INLTheme?
+	open var currentTheme: INLTheme?
 	var themeConsumers = [INLThemeConsumer]()
 
 	// MARK: - Register theme consumer
-	public func registerThemeConsumer(themeConsumer: INLThemeConsumer) {
+	open func registerThemeConsumer(_ themeConsumer: INLThemeConsumer) {
 
 		themeConsumers.append(themeConsumer)
 		if let theme = currentTheme {
@@ -31,31 +31,31 @@ public class INLThemeService: NSObject {
 		}
 	}
 
-	public func removeThemeConsumer(themeConsumer: INLThemeConsumer) {
+	open func removeThemeConsumer(_ themeConsumer: INLThemeConsumer) {
 
 		themeConsumers = themeConsumers.filter { !$0.isEqual(themeConsumer) }
 	}
 
 	// MARK: - Apply theme
-	public func applyTheme(theme: INLTheme) {
+	open func applyTheme(_ theme: INLTheme) {
 
 		currentTheme = theme;
 		themeConsumers.forEach { applyTheme(theme, to: $0) }
 	}
 
-	public func applyTheme(theme: INLTheme, to themeConsumer: INLThemeConsumer) {
+	open func applyTheme(_ theme: INLTheme, to themeConsumer: INLThemeConsumer) {
 
 		applyTheme(theme, toViews: themeConsumer.themedViews())
 	}
 
-	public func applyThemeTo(themeConsumer: INLThemeConsumer) {
+	open func applyThemeTo(_ themeConsumer: INLThemeConsumer) {
 
 		if let currentTheme = self.currentTheme {
 			applyTheme(currentTheme, to: themeConsumer)
 		}
 	}
 
-	func applyTheme(theme: INLTheme, toViews themedViews:[INLThemedView]) {
+	func applyTheme(_ theme: INLTheme, toViews themedViews:[INLThemedView]) {
 
 		themedViews.forEach {
 			if let element = theme.uiElements[$0.elementId] {
@@ -65,23 +65,23 @@ public class INLThemeService: NSObject {
 	}
 
 	// MARK: - Convinience
-	public class func registerThemeConsumer(themeConsumer: INLThemeConsumer) {
+	open class func registerThemeConsumer(_ themeConsumer: INLThemeConsumer) {
 		sharedService.registerThemeConsumer(themeConsumer)
 	}
 
-	public class func removeThemeConsumer(themeConsumer: INLThemeConsumer) {
+	open class func removeThemeConsumer(_ themeConsumer: INLThemeConsumer) {
 		sharedService.removeThemeConsumer(themeConsumer)
 	}
 
-	public class func applyTheme(theme: INLTheme) {
+	open class func applyTheme(_ theme: INLTheme) {
 		sharedService.applyTheme(theme)
 	}
 
-	public class func applyTheme(theme: INLTheme, to themeConsumer:INLThemeConsumer) {
+	open class func applyTheme(_ theme: INLTheme, to themeConsumer:INLThemeConsumer) {
 		sharedService.applyTheme(theme, to: themeConsumer)
 	}
 
-	public class func applyThemeTo(themeConsumer: INLThemeConsumer) {
+	open class func applyThemeTo(_ themeConsumer: INLThemeConsumer) {
 		sharedService.applyThemeTo(themeConsumer)
 	}
 }
