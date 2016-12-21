@@ -17,23 +17,11 @@ synthesizeElementId
 
 - (void)applyTheme:(INLThemeElement *)theme {
     if ([self isKindOfClass:[UILabel class]]) {
-        UILabel *label = (UILabel *) self;
-
         NSString *fontName = [theme valueForKey:@"font"];
-        NSString *textSizeValue = [theme valueForKey:@"textSize"];
-        CGFloat textSize = label.font.pointSize;
-
-        if (textSizeValue != nil) {
-            if (textSizeValue.floatValue > 0.0f) {
-                textSize = textSizeValue.floatValue;
-            }
-        }
 
         if (fontName != nil) {
-            label.font = [UIFont fontWithName:fontName size:textSize];
-        }
-        else if (textSize != label.font.pointSize) {
-            label.font = [label.font fontWithSize:textSize];
+            UILabel *label = (UILabel *) self;
+            label.font = [UIFont fontWithName:fontName size:label.font.pointSize];
         }
     }
 
